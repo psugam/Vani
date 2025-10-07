@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import startCase from '@stdlib/string-startcase' ;
+import startCase from '@stdlib/string-startcase';
+import parse from "html-react-parser";
+import DevanagariWordPopup from "../components/DevanagariWordPopup";
 
-  import parse from "html-react-parser";
 
 const ChapterPage = () => {
   const { chapterNo } = useParams();
@@ -13,6 +14,7 @@ const ChapterPage = () => {
   const [error, setError] = useState(null);
   const [hoveredFootnote, setHoveredFootnote] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+  const [selectedDevanagariWord, setSelectedDevanagariWord] = useState(null);
   const tooltipRef = useRef(null);
 
   const API_URL = `${import.meta.env.VITE_SINGLE_CHAPTER_URL}/${chapterNo}`;
@@ -43,10 +45,8 @@ const ChapterPage = () => {
     const fetchAuthor = async () => {
       console.log(`${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`)
       try {
-        const authorURL=`${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`
-        const res = await axios.get(
-          authorURL
-        );
+        const authorURL = `${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`
+        const res = await axios.get(authorURL);
         setAuthor(res.data.username || "Unknown");
       } catch (err) {
         console.error("Error fetching author:", err);
@@ -60,49 +60,99 @@ const ChapterPage = () => {
     hoveredFootnote &&
     chapter?.footnotes?.find((f) => f.number === hoveredFootnote);
 
-// const handleFootnoteHover = (footnoteNum, event) => {
-//   const rect = event.target.getBoundingClientRect();
-//   const scrollY = window.scrollY || window.pageYOffset;
-  
-//   // Position directly below the link
-//   let top = rect.bottom + scrollY + 4; // small gap
-//   let left = rect.left;
-  
-//   setTooltipPos({ x: left, y: top });
-//   setHoveredFootnote(footnoteNum);
-// };
+  // Check if a word contains Devanagari characters
+  const isDevanagari = (str) => {
+    const devanagariRegex = /[\u0900-\u097F]/;
+    return devanagariRegex.test(str);
+  };
 
+  // Tokenize text into words and separators
+  const tokenize = (str) => {
+    return str.split(/(\s+|[।,;!?.])/);
+  };
 
+  // Process text node to make Devanagari words clickable
+  const processTextNode = (text) => {
+    if (typeof text !== 'string') return text;
+    
+    const tokens = tokenize(text);
+    return tokens.map((token, idx) => {
+      const isWord = token.trim() && !/^[।,;!?.\s]+$/.test(token);
+      const isDevanagariWord = isWord && isDevanagari(token);
+      
+      if (isDevanagariWord) {
+        return (
+          <span
+            key={`deva-${idx}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedDevanagariWord(token);
+            }}
+            className="cursor-pointer hover:bg-blue-100 transition-colors rounded px-0.5"
+          >
+            {token}
+          </span>
+        );
+      }
+      return <React.Fragment key={`text-${idx}`}>{token}</React.Fragment>;
+    });
+  };
 
-const handleFootnoteHover = (footnoteNum, event) => {
-  const rect = event.target.getBoundingClientRect();
-  const scrollY = window.scrollY || window.pageYOffset;
-  const viewportHeight = window.innerHeight;
-  
-  // Calculate initial position below the link
-  let top = rect.bottom + scrollY + 4;
-  let left = rect.left;
-  
-  // Check if tooltip would go below viewport
-  const tooltipHeight = 200; // approximate max height
-  const spaceBelow = viewportHeight - rect.bottom;
-  
-  // If not enough space below, position above the link instead
-  if (spaceBelow < tooltipHeight && rect.top > tooltipHeight) {
-    top = rect.top + scrollY - tooltipHeight - 4;
-  }
-  
-  // Keep tooltip within horizontal bounds
-  const tooltipWidth = 384; // max-w-sm = 384px
-  if (left + tooltipWidth > window.innerWidth) {
-    left = window.innerWidth - tooltipWidth - 16;
-  }
-  
-  setTooltipPos({ x: Math.max(16, left), y: top });
-  setHoveredFootnote(footnoteNum);
-};
+  // Recursively process parsed HTML nodes
+  const processNodes = (nodes) => {
+    if (!nodes) return null;
+    
+    if (typeof nodes === 'string') {
+      return processTextNode(nodes);
+    }
+    
+    if (Array.isArray(nodes)) {
+      return nodes.map((node, idx) => {
+        if (typeof node === 'string') {
+          return <React.Fragment key={idx}>{processTextNode(node)}</React.Fragment>;
+        }
+        if (React.isValidElement(node)) {
+          return React.cloneElement(node, {
+            key: idx,
+            children: processNodes(node.props.children)
+          });
+        }
+        return node;
+      });
+    }
+    
+    if (React.isValidElement(nodes)) {
+      return React.cloneElement(nodes, {
+        children: processNodes(nodes.props.children)
+      });
+    }
+    
+    return nodes;
+  };
 
-
+  const handleFootnoteHover = (footnoteNum, event) => {
+    const rect = event.target.getBoundingClientRect();
+    const scrollY = window.scrollY || window.pageYOffset;
+    const viewportHeight = window.innerHeight;
+    
+    let top = rect.bottom + scrollY + 4;
+    let left = rect.left;
+    
+    const tooltipHeight = 200;
+    const spaceBelow = viewportHeight - rect.bottom;
+    
+    if (spaceBelow < tooltipHeight && rect.top > tooltipHeight) {
+      top = rect.top + scrollY - tooltipHeight - 4;
+    }
+    
+    const tooltipWidth = 384;
+    if (left + tooltipWidth > window.innerWidth) {
+      left = window.innerWidth - tooltipWidth - 16;
+    }
+    
+    setTooltipPos({ x: Math.max(16, left), y: top });
+    setHoveredFootnote(footnoteNum);
+  };
 
   const handleFootnoteLeave = (e) => {
     setTimeout(() => {
@@ -116,86 +166,51 @@ const handleFootnoteHover = (footnoteNum, event) => {
     }, 150);
   };
 
-  // const parseTextWithFootnotes = (text, footnotes) => {
-  //   if (!text) return null;
-  //   const regex = /\[\^(\d+)\]/g;
-  //   const elements = [];
-  //   let lastIndex = 0;
-  //   let match;
+  const parseTextWithFootnotes = (text, footnotes) => {
+    if (!text) return null;
+    const regex = /\[\^(\d+)\]/g;
+    const elements = [];
+    let lastIndex = 0;
+    let match;
 
-  //   while ((match = regex.exec(text)) !== null) {
-  //     const noteNumber = match[1];
-  //     elements.push(text.slice(lastIndex, match.index));
-  //     elements.push(
-  //       <sup
-  //         key={match.index}
-  //         data-footnote={noteNumber}
-  //         className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
-  //         onMouseEnter={(e) => handleFootnoteHover(noteNumber, e)}
-  //         onMouseLeave={handleFootnoteLeave}
-  //         onClick={() => {
-  //           const el = document.getElementById(`footnote-${noteNumber}`);
-  //           if (el)
-  //             el.scrollIntoView({ behavior: "smooth", block: "start" });
-  //         }}
-  //       >
-  //         [{noteNumber}]
-  //       </sup>
-  //     );
-  //     lastIndex = regex.lastIndex;
-  //   }
+    while ((match = regex.exec(text)) !== null) {
+      const noteNumber = match[1];
 
-  //   elements.push(text.slice(lastIndex));
-  //   return elements;
-  // };
+      const beforeText = text.slice(lastIndex, match.index);
+      if (beforeText) {
+        const parsed = parse(beforeText);
+        const processed = processNodes(parsed);
+        elements.push(<React.Fragment key={`before-${match.index}`}>{processed}</React.Fragment>);
+      }
 
+      elements.push(
+        <sup
+          key={match.index}
+          data-footnote={noteNumber}
+          className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
+          onMouseEnter={(e) => handleFootnoteHover(noteNumber, e)}
+          onMouseLeave={handleFootnoteLeave}
+          onClick={() => {
+            const el = document.getElementById(`footnote-${noteNumber}`);
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+        >
+          [{noteNumber}]
+        </sup>
+      );
 
-const parseTextWithFootnotes = (text, footnotes) => {
-  if (!text) return null;
-  const regex = /\[\^(\d+)\]/g;
-  const elements = [];
-  let lastIndex = 0;
-  let match;
-
-  while ((match = regex.exec(text)) !== null) {
-    const noteNumber = match[1];
-
-    // Extract portion before this footnote
-    const beforeText = text.slice(lastIndex, match.index);
-    if (beforeText) {
-      // Parse HTML safely
-      elements.push(parse(beforeText));
+      lastIndex = regex.lastIndex;
     }
 
-    // Add clickable + hoverable footnote reference
-    elements.push(
-      <sup
-        key={match.index}
-        data-footnote={noteNumber}
-        className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors"
-        onMouseEnter={(e) => handleFootnoteHover(noteNumber, e)}
-        onMouseLeave={handleFootnoteLeave}
-        onClick={() => {
-          const el = document.getElementById(`footnote-${noteNumber}`);
-          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }}
-      >
-        [{noteNumber}]
-      </sup>
-    );
+    const remainingText = text.slice(lastIndex);
+    if (remainingText) {
+      const parsed = parse(remainingText);
+      const processed = processNodes(parsed);
+      elements.push(<React.Fragment key="remaining">{processed}</React.Fragment>);
+    }
 
-    lastIndex = regex.lastIndex;
-  }
-
-  // Add the final remaining text (after last footnote)
-  const remainingText = text.slice(lastIndex);
-  if (remainingText) {
-    elements.push(parse(remainingText));
-  }
-
-  return elements;
-};
-
+    return elements;
+  };
 
   if (loading)
     return (
@@ -236,11 +251,11 @@ const parseTextWithFootnotes = (text, footnotes) => {
           </div>
         </div>
 
-        {/* Main Text */}
+ {/* Main Text */}
         <div className="prose prose-lg max-w-none">
-          <p className="text-gray-800 leading-relaxed text-lg">
+          <div className="text-gray-800 leading-relaxed text-lg">
             {parseTextWithFootnotes(chapter.mainText, chapter.footnotes)}
-          </p>
+          </div>
         </div>
 
         {/* Footnotes */}
@@ -279,25 +294,31 @@ const parseTextWithFootnotes = (text, footnotes) => {
         )}
       </div>
 
-      {/* Hover Tooltip */}
-{hoveredFootnote && currentFootnote && (
-  <div
-    ref={tooltipRef}
-    className="absolute z-50 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-xl max-w-sm"
-    style={{
-      left: `${tooltipPos.x}px`,
-      top: `${tooltipPos.y}px`,
-      maxHeight: '200px',
-      overflowY: 'auto'
-    }}
-    onMouseLeave={() => setHoveredFootnote(null)}
-  >
-    <div className="text-xs font-semibold mb-1">
-      Footnote {currentFootnote.number}
-    </div>
-    <div className="text-sm">{currentFootnote.text}</div>
-  </div>
-)}
+      {/* Footnote Hover Tooltip */}
+      {hoveredFootnote && currentFootnote && (
+        <div
+          ref={tooltipRef}
+          className="absolute z-50 bg-gray-900 text-white px-4 py-3 rounded-lg shadow-xl max-w-sm"
+          style={{
+            left: `${tooltipPos.x}px`,
+            top: `${tooltipPos.y}px`,
+            maxHeight: '200px',
+            overflowY: 'auto'
+          }}
+          onMouseLeave={() => setHoveredFootnote(null)}
+        >
+          <div className="text-xs font-semibold mb-1">
+            Footnote {currentFootnote.number}
+          </div>
+          <div className="text-sm">{currentFootnote.text}</div>
+        </div>
+      )}
+
+      {/* Devanagari Word Popup */}
+      <DevanagariWordPopup 
+        word={selectedDevanagariWord}
+        onClose={() => setSelectedDevanagariWord(null)}
+      />
     </div>
   );
 };
