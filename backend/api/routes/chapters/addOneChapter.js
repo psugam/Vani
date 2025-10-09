@@ -1,7 +1,7 @@
 const express=require('express');
 const router=express.Router();
-const Chapter=require('../../../database/chapter.model');
-const User=require('../../../database/user.model')
+const Chapter=require('../../database/chapter.model');
+const User=require('../../database/user.model')
 
 router.post('/chapters/addonechapter', async(req, res, next)=>{
     try{

@@ -1,6 +1,6 @@
 const express=require('express');
 const router=express.Router();
-const Chapter=require('../../../database/chapter.model');
+const Chapter=require('../../database/chapter.model');
 
 router.get('/chapters/getallchapters', async(req, res, next)=>{
     try{

@@ -4,7 +4,7 @@ const bcrypt=require('bcryptjs');
 const cors=require('cors');
 router.use(cors());
 
-const User=require('../../../database/user.model');
+const User=require('../../database/user.model');
 
 
 router.post('/users/register', async (req, res)=>{
