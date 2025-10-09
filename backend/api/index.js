@@ -17,7 +17,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(express.json());
 
 const addOneChapter=require('../routes/chapters/addOneChapter')
 const getAllChapters=require('../routes/chapters/getAllChapters')
@@ -38,14 +38,12 @@ const registerUser=require('../routes/users/registerUser')
 
 const searchInMw =require('../routes/dictionary/mw/searchInMw');
 
+const getOneChapterRoute=require('./chapters/getOneChapter.js')
 
-app.use(express.json());
-app.use(cors())
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
-
 
 
 async function startServer(){
@@ -75,6 +73,8 @@ async function startServer(){
       // app.use('/api/vei', veiSearchTerm)
 
       app.use('/api/mw', searchInMw);
+
+      app.use("/getchapter", getOneChapterRoute);
 
 
 
