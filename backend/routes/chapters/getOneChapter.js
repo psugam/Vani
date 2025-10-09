@@ -4,6 +4,7 @@ const router=express.Router();
 const Chapter=require('../../database/chapter.model');
 
 router.get('/chapters/:chapterNo', async(req, res, next)=>{
+    
     const {chapterNo}=req.params;
      if(!chapterNo){
         return res.status(400).json({
