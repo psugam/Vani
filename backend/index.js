@@ -1,10 +1,25 @@
 const express = require('express')
 const app = express()
 const port = 3000
-const cors=require('cors');
 const dotenv =require('dotenv');
 const connectDB = require('./database/connect');
 dotenv.config();
+
+
+
+const corsOptions = {
+  origin: [
+    'https://vani-n4zf.vercel.app/', // Replace with your actual frontend URL
+    'http://localhost:3000', // For local development
+    'http://localhost:5173', // If using Vite
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
+
 
 const addOneChapter=require('./routes/chapters/addOneChapter')
 const getAllChapters=require('./routes/chapters/getAllChapters')
