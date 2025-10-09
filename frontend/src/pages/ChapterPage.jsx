@@ -43,7 +43,7 @@ const ChapterPage = () => {
   useEffect(() => {
     if (!chapter || !chapter.userId) return;
     const fetchAuthor = async () => {
-      console.log(`${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`)
+      // console.log(`${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`)
       try {
         const authorURL = `${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`
         const res = await axios.get(authorURL);

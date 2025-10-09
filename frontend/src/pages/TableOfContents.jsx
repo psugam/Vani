@@ -15,7 +15,7 @@ const TableOfContents = () => {
           if (res.status !== 200) throw new Error("Failed to fetch data");
           const data =  res.data;
           setTocData(data);
-          console.log(data);
+          // console.log(data);
          
         } catch (err) {
          console.log(err.message)

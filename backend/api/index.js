@@ -47,9 +47,9 @@ app.get('/', (req, res) => {
 // async function startServer(){
 //    try{
 //     await connectDB();
-//     // app.listen(port, () => {
-//     //     console.log(`Example app listening on port ${port}`)
-//     //   })
+    // app.listen(port, () => {
+    //     console.log(`Example app listening on port ${port}`)
+    //   })
 
 //       // for the user side. No need for UI here. Not connected to frontend
 //       app.use('/api', registerUser);
