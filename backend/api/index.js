@@ -44,45 +44,64 @@ app.get('/', (req, res) => {
 })
 
 
-async function startServer(){
-   try{
-    await connectDB();
-    // app.listen(port, () => {
-    //     console.log(`Example app listening on port ${port}`)
-    //   })
+// async function startServer(){
+//    try{
+//     await connectDB();
+//     // app.listen(port, () => {
+//     //     console.log(`Example app listening on port ${port}`)
+//     //   })
 
-      // for the user side. No need for UI here. Not connected to frontend
-      app.use('/api', registerUser);
-      app.use('/api', loginUser);
-      app.use('/api', getUsername);
+//       // for the user side. No need for UI here. Not connected to frontend
+//       app.use('/api', registerUser);
+//       app.use('/api', loginUser);
+//       app.use('/api', getUsername);
 
 
-      // for chapters and other data
-      app.use('/api',addOneChapter);
-      app.use('/api', getAllChapters);
-      app.use('/api', getOneChapter);
-      app.use('/api', deleteOneChapter);
-      app.use('/api', editOneChapter);
+//       // for chapters and other data
+//       app.use('/api',addOneChapter);
+//       app.use('/api', getAllChapters);
+//       app.use('/api', getOneChapter);
+//       app.use('/api', deleteOneChapter);
+//       app.use('/api', editOneChapter);
 
-      // for search function
-      // app.use('/api/ap', apSearchTerm);
-      // app.use('/api/mw', mwSearchTerm);
-      // app.use('/api/bhs', bhsSearchTerm);
-      // app.use('/api/vei', veiSearchTerm)
+//       // for search function
+//       // app.use('/api/ap', apSearchTerm);
+//       // app.use('/api/mw', mwSearchTerm);
+//       // app.use('/api/bhs', bhsSearchTerm);
+//       // app.use('/api/vei', veiSearchTerm)
 
-      app.use('/api/mw', searchInMw);
+//       app.use('/api/mw', searchInMw);
 
   
 
 
 
-   }
-   catch(error){
-     console.error('Failed to start server:', error);
-    process.exit(1);
-   }
-}
+//    }
+//    catch(error){
+//      console.error('Failed to start server:', error);
+//     process.exit(1);
+//    }
+// }
 
-startServer();
+// startServer();
 
-module.exports = app; 
+
+
+// Register routes
+app.use('/api', registerUser);
+app.use('/api', loginUser);
+app.use('/api', getUsername);
+
+app.use('/api', addOneChapter);
+app.use('/api', getAllChapters);
+app.use('/api', getOneChapter);
+app.use('/api', deleteOneChapter);
+app.use('/api', editOneChapter);
+
+app.use('/api/mw', searchInMw);
+
+// Connect to database
+connectDB().catch(err => console.error('Database connection error:', err));
+
+// Export for Vercel
+module.exports = app;
