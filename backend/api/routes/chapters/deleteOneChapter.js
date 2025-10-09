@@ -1,6 +1,6 @@
 const express=require('express');
 const router=express.Router();
-const Chapter=require('../../database/chapter.model');
+const Chapter=require('../../../database/chapter.model');
 
 
 router.delete('/chapters/deleteonechapter/:chapterId',async(req,res)=>{

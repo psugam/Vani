@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const User = require('../../database/user.model');
+const User = require('../../../database/user.model');
 
 dotenv.config();
 router.use(cors());

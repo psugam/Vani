@@ -19,16 +19,16 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-const addOneChapter=require('../routes/chapters/addOneChapter')
-const getAllChapters=require('../routes/chapters/getAllChapters')
-const getOneChapter=require('../routes/chapters/getOneChapter');
-const deleteOneChapter=require('../routes/chapters/deleteOneChapter')
-const editOneChapter=require('../routes/chapters/editOneChapter')
+const addOneChapter=require('./routes/chapters/addOneChapter')
+const getAllChapters=require('./routes/chapters/getAllChapters')
+const getOneChapter=require('./routes/chapters/getOneChapter');
+const deleteOneChapter=require('./routes/chapters/deleteOneChapter')
+const editOneChapter=require('./routes/chapters/editOneChapter')
 
 
-const getUsername=require('../routes/users/getUsername')
-const loginUser=require('../routes/users/loginUser');
-const registerUser=require('../routes/users/registerUser')
+const getUsername=require('./routes/users/getUsername')
+const loginUser=require('./routes/users/loginUser');
+const registerUser=require('./routes/users/registerUser')
 
 
 // const apSearchTerm=require('../backend/dictionary_handler/routes/ap/searchWord')
@@ -36,9 +36,7 @@ const registerUser=require('../routes/users/registerUser')
 // const bhsSearchTerm=require("../backend/dictionary_handler/routes/bhs/searchWord")
 // const veiSearchTerm=require("../backend/dictionary_handler/routes/vei/searchWord")
 
-const searchInMw =require('../routes/dictionary/mw/searchInMw');
-
-const getOneChapterRoute=require('./chapters/getOneChapter.js')
+const searchInMw =require('./routes/dictionary/mw/searchInMw');
 
 
 app.get('/', (req, res) => {
@@ -74,7 +72,7 @@ async function startServer(){
 
       app.use('/api/mw', searchInMw);
 
-      app.use("/getchapter", getOneChapterRoute);
+  
 
 
 

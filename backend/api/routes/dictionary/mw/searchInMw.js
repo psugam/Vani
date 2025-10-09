@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const MW = require("../../../database/mw.model");
+const MW = require("../../../../database/mw.model");
 
 // GET /api/mw/search/:searchWord
 router.get("/search/:searchWord", async (req, res) => {
