@@ -8,12 +8,9 @@ dotenv.config();
 
 
 
+// Allow requests from anywhere
 const corsOptions = {
-  origin: [
-    'https://vani-n4zf.vercel.app/', // Replace with your actual frontend URL
-    'http://localhost:3000', // For local development
-    'http://localhost:5173', // If using Vite
-  ],
+  origin: '*', // This allows all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
