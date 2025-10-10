@@ -7,10 +7,8 @@ const connectDB = require('./database/connect');
 dotenv.config();
 
 
-
-// Allow requests from anywhere
 const corsOptions = {
-  origin: '*', // This allows all origins
+  origin: '*', // This allows all origins change to allowable ones=frontend url and localhost
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -19,6 +17,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// chapter routes
 const addOneChapter=require('./routes/chapters/addOneChapter')
 const getAllChapters=require('./routes/chapters/getAllChapters')
 const getOneChapter=require('./routes/chapters/getOneChapter');
@@ -26,22 +25,21 @@ const deleteOneChapter=require('./routes/chapters/deleteOneChapter')
 const editOneChapter=require('./routes/chapters/editOneChapter')
 
 
+// user routes
 const getUsername=require('./routes/users/getUsername')
 const loginUser=require('./routes/users/loginUser');
 const registerUser=require('./routes/users/registerUser')
 
 
-// const apSearchTerm=require('../backend/dictionary_handler/routes/ap/searchWord')
-// const mwSearchTerm=require('../backend/dictionary_handler/routes/mw/searchWord')
-// const bhsSearchTerm=require("../backend/dictionary_handler/routes/bhs/searchWord")
-// const veiSearchTerm=require("../backend/dictionary_handler/routes/vei/searchWord")
-
+// dictionary routes
 const searchInMw =require('./routes/dictionary/mw/searchInMw');
 
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+
+// somehow doesn't work in vercel while using the startServer function but works otherwise. don;t know why  
 
 
 // async function startServer(){
@@ -50,6 +48,8 @@ app.get('/', (req, res) => {
     // app.listen(port, () => {
     //     console.log(`Example app listening on port ${port}`)
     //   })
+
+
 
 //       // for the user side. No need for UI here. Not connected to frontend
 //       app.use('/api', registerUser);
@@ -87,18 +87,22 @@ app.get('/', (req, res) => {
 
 
 
-// Register routes
+// User routes
 app.use('/api', registerUser);
 app.use('/api', loginUser);
 app.use('/api', getUsername);
 
+
+// chapter routes
 app.use('/api', addOneChapter);
 app.use('/api', getAllChapters);
 app.use('/api', getOneChapter);
 app.use('/api', deleteOneChapter);
 app.use('/api', editOneChapter);
 
-app.use('/api/mw', searchInMw);
+
+// dictionary routes
+app.use('/api/mw', searchInMw);  //monier williams jsonized mongo
 
 // Connect to database
 connectDB().catch(err => console.error('Database connection error:', err));

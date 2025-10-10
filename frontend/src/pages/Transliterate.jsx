@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Sanscript from "@indic-transliteration/sanscript";
 import startCase from '@stdlib/string-startcase';
 
+
+// for the sanscript conversion option both input and output
 const schemes = [
   "devanagari",
   "bengali",
@@ -23,17 +25,20 @@ const schemes = [
 ];
 
 export default function Transliterate() {
+
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
+//   default devanagari to iast
   const [fromScheme, setFromScheme] = useState("devanagari");
   const [toScheme, setToScheme] = useState("iast");
 
-  // Simple function to heuristically detect input script
+  // checking input. If wrong script popup shows
   const detectScript = (text) => {
     if (!text) return null;
     const c = text.trim()[0];
     const code = c.charCodeAt(0);
 
+    // these are from the unicode representations for each script, works on more or less all cases. there are some exceptions.
     if (code >= 0x0900 && code <= 0x097f) return "devanagari";
     if (code >= 0x0980 && code <= 0x09ff) return "bengali";
     if (code >= 0x0a80 && code <= 0x0aff) return "gujarati";
@@ -47,11 +52,15 @@ export default function Transliterate() {
     return "unknown";
   };
 
+
+//   for danda and double danda some more tinckering is needed. Danda is converted wrrongly to |.
   const handleTransliterate = () => {
     if (!inputText.trim()) {
       alert("Please enter some text first.");
       return;
     }
+
+    // wrong input and script choice
 
     const detected = detectScript(inputText);
     if (detected !== fromScheme && !(detected === "roman" && isRomanScheme(fromScheme))) {
@@ -61,9 +70,12 @@ export default function Transliterate() {
       return;
     }
 
+    // the conversion happens here.
     const result = Sanscript.t(inputText, fromScheme, toScheme);
     setOutputText(result);
   };
+
+
 
   // Check if a scheme is Roman
   const isRomanScheme = (scheme) =>
@@ -76,14 +88,19 @@ export default function Transliterate() {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Input section */}
+        {/* Input wordbox  */}
+        {/* implement box size and input limit here */}
         <div>
           <label className="block mb-2 font-medium text-gray-700">
             Input ({startCase(fromScheme)})
+            
           </label>
+          {/* dropdown select */}
           <select
             value={fromScheme}
-            onChange={(e) => setFromScheme(e.target.value)}
+            onChange={(e) => 
+                setFromScheme(e.target.value)
+            }
             className="w-full p-2 mb-4 border rounded-md"
           >
             {schemes.map((scheme) => (
@@ -95,24 +112,26 @@ export default function Transliterate() {
 
           <textarea
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={(e) => 
+                setInputText(e.target.value)
+            }
             className="w-full h-48 p-3 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
             placeholder="Enter text here..."
           />
 
           <button
             onClick={handleTransliterate}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="mt-4 px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-800 ml-4 cursor-pointer"
           >
             Transliterate
           </button>
-
+{/* clear both input and output */}
           <button
             onClick={() => {
               setInputText("");
               setOutputText("");
             }}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ml-4"
+            className="mt-4 px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-800 ml-4 cursor-pointer"
           >
             Clear
           </button>
@@ -147,7 +166,7 @@ export default function Transliterate() {
               navigator.clipboard.writeText(outputText);
               alert('Copied')
             }}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ml-4"
+            className="mt-4 px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-800 ml-4 cursor-pointer"
           >
             Copy
           </button>

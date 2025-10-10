@@ -8,7 +8,7 @@ router.get('/chapters/:chapterNo', async(req, res, next)=>{
     const {chapterNo}=req.params;
      if(!chapterNo){
         return res.status(400).json({
-            message:"Chapter number is required"
+            message:"Chapter number is required."
         })
      }
     try{
@@ -17,7 +17,7 @@ router.get('/chapters/:chapterNo', async(req, res, next)=>{
     }
     catch(error){
         res.status(500).json({
-            message:"Error fetching chapters",
+            message:"Error fetching chapters.",
             error: error.message
         })
     }
