@@ -286,7 +286,11 @@ const ChapterPage = () => {
                   >
                     [{footnote.number}]
                   </span>
-                  <span className="text-gray-700">{footnote.text}</span>
+                            <span
+            className="text-gray-700"
+            dangerouslySetInnerHTML={{ __html: footnote.text }}
+          />
+
                 </div>
               ))}
             </div>
