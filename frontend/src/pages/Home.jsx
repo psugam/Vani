@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Home = () => {
   return (
@@ -66,12 +67,25 @@ const Home = () => {
 
           <div className='text-center p-4'>
             <div className='text-3xl mb-2'>🔗</div>
-            <h4 className='font-semibold text-gray-800 mb-1'>Linked Resources</h4>
+            <h4 className='font-semibold text-gray-800 mb-1'>
+              <a href="/resources">Linked Resources</a>
+              </h4>
             <p className='text-sm text-gray-600'>
               Integrated dictionary and reference tools
             </p>
           </div>
         </div>
+
+    
+        <div className='text-center p-4'>
+            <div className='text-3xl mb-2'>📝</div>
+            <h4 className='font-semibold text-gray-800 mb-1'>
+              <a href="/transliterate">Transliterate tool</a>
+              </h4>
+            <p className='text-sm text-gray-600'>
+              Transliterate text into a variety of scripts and schemes. 
+            </p>
+          </div>
 
         {/* CTA */}
         <div className='text-center'>

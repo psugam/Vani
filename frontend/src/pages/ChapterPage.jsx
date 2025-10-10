@@ -314,7 +314,7 @@ const ChapterPage = () => {
           <div className="text-xs font-semibold mb-1">
             Footnote {currentFootnote.number}
           </div>
-          <div className="text-sm">{currentFootnote.text}</div>
+          <div className="text-sm"  dangerouslySetInnerHTML={{ __html: currentFootnote.text }}/>
         </div>
       )}
 
