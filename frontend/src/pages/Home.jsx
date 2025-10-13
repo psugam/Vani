@@ -74,10 +74,8 @@ const Home = () => {
               Integrated dictionary and reference tools
             </p>
           </div>
-        </div>
 
-    
-        <div className='text-center p-4'>
+                  <div className='text-center p-4'>
             <div className='text-3xl mb-2'>📝</div>
             <h4 className='font-semibold text-gray-800 mb-1'>
               <a href="/transliterate">Transliterate tool</a>
@@ -86,6 +84,24 @@ const Home = () => {
               Transliterate text into a variety of scripts and schemes. 
             </p>
           </div>
+
+
+                        
+        <div className='text-center p-4'>
+            <div className='text-3xl mb-2'>📝</div>
+            <h4 className='font-semibold text-gray-800 mb-1'>
+              <a href="/dictionary">Dictionary Tool</a>
+              </h4>
+            <p className='text-sm text-gray-600'>
+              Search the meaning of Sanskrit Words in a number of dictionaries. 
+            </p>
+          </div>
+        </div>
+
+    
+
+
+
 
         {/* CTA */}
         <div className='text-center'>

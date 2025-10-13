@@ -13,6 +13,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NotFound from './pages/NotFound'
 import Transliterate from './pages/Transliterate'
+import DictionarySearch from './pages/DictionarySearch'
 
 function App() {
   const [count, setCount] = useState(0);
@@ -29,6 +30,7 @@ function App() {
   <Route path='/resources' element={<Resources/>} />
   <Route path='/about' element={<About/>} />
   <Route path='/transliterate' element={<Transliterate/>}/>
+  <Route path='/dictionary' element={<DictionarySearch/>}/>
   <Route path='*' element ={<NotFound/>} />
 
 </Routes>

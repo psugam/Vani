@@ -44,10 +44,10 @@ app.get('/', (req, res) => {
 
 // async function startServer(){
 //    try{
-//     await connectDB();
-    // app.listen(port, () => {
-    //     console.log(`Example app listening on port ${port}`)
-    //   })
+    // await connectDB();
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
+      })
 
 
 
