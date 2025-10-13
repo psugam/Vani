@@ -17,8 +17,10 @@ function DictionarySearch() {
     try{
        const res= await axios.get(dictionary_search_api_uri);
        setDictionaryEntry(res.data)
+      //  console.log(res.data)
     }catch(error){
         console.log(error)
+        setDictionaryEntry("")
     }
     setInputValue(''); // Clears the input field after submission search nothing.
   };
@@ -42,8 +44,9 @@ function DictionarySearch() {
       </button>
       <div className='text-gray-500 text-center'>Please enter the search word in iast format. <br />Other scripts and transliterations will not work. Transliterate your word <a href="/transliterate" className='underline'>here</a>.</div>
     </form>
-        <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold text-center mb-6">Dictionary Results</h1>
+        {/* <div className="min-h-screen bg-gray-50 p-6"> */}
+        <div>
+      {/* <h1 className="text-2xl font-bold text-center mb-6">Dictionary Results</h1> */}
      {!dictionaryEntry? 
      (<div></div>):
     (<DictionaryResults data={dictionaryEntry} />)}

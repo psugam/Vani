@@ -4,7 +4,7 @@ const express = require('express');
 // const cors = require('cors'); // cors handled at deployment level or in app if needed
 
 const router = express.Router();
-const Meaning = require("../../../database/new_mw.model");
+const Apte = require("../../../database/ap90.model");
 
 
 
@@ -19,13 +19,13 @@ router.get("/search/:searchWord", async (req, res) => {
 
   try {
     // 1️⃣ Try to find exact match in main entries
-    const entry = await Meaning.findOne({ word_iast: query }).lean();
+    const entry = await Apte.findOne({ word_iast: query }).lean();
     if (entry) {
       return res.json({ found_in: "main", result: entry });
     }
 
     // 2️⃣ If not found, search in related entries
-    const parentEntry = await Meaning.findOne({
+    const parentEntry = await Apte.findOne({
       "related.word_iast": query,
     }).lean();
 

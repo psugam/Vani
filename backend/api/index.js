@@ -32,8 +32,12 @@ const registerUser=require('./routes/users/registerUser')
 
 
 // dictionary routes
-const searchInMw =require('./routes/dictionary/mw/searchInMw');
-
+// const searchInMw =require('./routes/dictionary/mw/searchInMw');
+const searchInMw=require('./routes/dictionary/mw/searchInMw')
+const searchInApte=require('./routes/dictionary/ap/searchInApte')
+const searchInVei=require('./routes/dictionary/vei/searchInVei')
+const searchInBhs=require('./routes/dictionary/bhs/searchInBhs')
+const searchAllDictionaries=require('./routes/dictionary/all/searchAllDictionaries')
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
@@ -45,9 +49,9 @@ app.get('/', (req, res) => {
 // async function startServer(){
 //    try{
     // await connectDB();
-    app.listen(port, () => {
-        console.log(`Example app listening on port ${port}`)
-      })
+    // app.listen(port, () => {
+    //     console.log(`Example app listening on port ${port}`)
+    //   })
 
 
 
@@ -102,8 +106,12 @@ app.use('/api', editOneChapter);
 
 
 // dictionary routes
-app.use('/api/mw', searchInMw);  //monier williams jsonized mongo
-
+// app.use('/api/mw', searchInMw);  // old remove now monier williams jsonized mongo
+app.use('/api/mw', searchInMw)
+app.use('/api/ap', searchInApte)
+app.use('/api/vei', searchInVei)
+app.use('/api/bhs', searchInBhs)
+app.use('/api/all', searchAllDictionaries)
 // Connect to database
 connectDB().catch(err => console.error('Database connection error:', err));
 
