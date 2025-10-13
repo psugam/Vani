@@ -27,32 +27,67 @@ function DictionarySearch() {
   
 
   return (
-    <>
-    <form onSubmit={handleSubmit} className="flex flex-col items-center p-4 space-y-4">
-      <input
-        type="text"
-        value={inputValue}
-        onChange={handleChange}
-        placeholder="Enter text here..."
-        className="w-full max-w-md p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <button
-        type="submit"
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        Submit
-      </button>
-      <div className='text-gray-500 text-center'>Please enter the search word in iast format. <br />Other scripts and transliterations will not work. Transliterate your word <a href="/transliterate" className='underline'>here</a>.</div>
-    </form>
-        {/* <div className="min-h-screen bg-gray-50 p-6"> */}
-        <div>
-      {/* <h1 className="text-2xl font-bold text-center mb-6">Dictionary Results</h1> */}
-     {!dictionaryEntry? 
-     (<div></div>):
-    (<DictionaryResults data={dictionaryEntry} />)}
-      
-    </div>
-    </>
+  <>
+  <div className="min-h-[80vh] flex flex-col">
+    {!dictionaryEntry ? (
+      // Vertically center the form when no results
+      <div className="flex flex-1 justify-center items-center">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center p-4 space-y-4">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            placeholder="Enter search word here..."
+            className="w-full max-w-md p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Search
+          </button>
+          <div className="text-gray-500 text-center">
+            Please enter the search word in iast format. <br />
+            Other scripts and transliterations will not work. Transliterate your word{" "}
+            <a href="/transliterate" className="underline">
+              here
+            </a>.
+          </div>
+        </form>
+      </div>
+    ) : (
+      // If results exist, show form at top and results below
+      <>
+        <form onSubmit={handleSubmit} className="flex flex-col items-center p-4 space-y-4">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleChange}
+            placeholder="Enter search word here..."
+            className="w-full max-w-md p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Search
+          </button>
+          <div className="text-gray-500 text-center">
+            Please enter the search word in iast format. <br />
+            Other scripts and transliterations will not work. Transliterate your word{" "}
+            <a href="/transliterate" className="underline">
+              here
+            </a>.
+          </div>
+        </form>
+        <div className="flex-1 mt-4">
+          <DictionaryResults data={dictionaryEntry} />
+        </div>
+      </>
+    )}
+  </div>
+</>
+
   );
 }
 
