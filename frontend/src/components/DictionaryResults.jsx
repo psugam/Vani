@@ -40,8 +40,10 @@ export default function DictionaryResults({ data }) {
                   <div className="prose max-w-none text-gray-800">
                     {/* Render HTML content safely */}
                     <div
-                      dangerouslySetInnerHTML={{ __html: entry.data }}
-                    ></div>
+                      dangerouslySetInnerHTML={{ __html: entry.data.replace(/<s>.*?<\/s>/g, "").replace(/<key2>.*?<\/key2>/g, "") }}
+                    >
+                      {/* {console.log(entry.data)} */}
+                    </div>
                   </div>
                 </div>
               ))}

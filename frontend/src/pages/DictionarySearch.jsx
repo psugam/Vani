@@ -12,7 +12,7 @@ function DictionarySearch() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevents the default form submission behavior (page reload)
-    alert(`Submitted value: ${inputValue}`);
+    // alert(`Submitted value: ${inputValue}`);
     const dictionary_search_api_uri=`${import.meta.env.VITE_ALL_DICT_URL}/${inputValue}`
     try{
        const res= await axios.get(dictionary_search_api_uri);
@@ -40,6 +40,7 @@ function DictionarySearch() {
       >
         Submit
       </button>
+      <div className='text-gray-500 text-center'>Please enter the search word in iast format. <br />Other scripts and transliterations will not work. Transliterate your word <a href="/transliterate" className='underline'>here</a>.</div>
     </form>
         <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-2xl font-bold text-center mb-6">Dictionary Results</h1>
