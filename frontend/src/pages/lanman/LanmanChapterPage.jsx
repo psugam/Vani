@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import startCase from '@stdlib/string-startcase';
+import startCase from "@stdlib/string-startcase";
 import parse from "html-react-parser";
-import DevanagariWordPopup from "../components/DevanagariWordPopup";
-
+import DevanagariWordPopup from "../../components/DevanagariWordPopup";
 
 const ChapterPage = () => {
   const { chapterNo } = useParams();
@@ -17,7 +16,9 @@ const ChapterPage = () => {
   const [selectedDevanagariWord, setSelectedDevanagariWord] = useState(null);
   const tooltipRef = useRef(null);
 
-  const API_URL = `${import.meta.env.VITE_SINGLE_CHAPTER_URL}/${chapterNo}`;
+  const API_URL = `${
+    import.meta.env.VITE_SINGLE_CHAPTER_URL_LANMAN
+  }/${chapterNo}`;
 
   useEffect(() => {
     const fetchChapter = async () => {
@@ -45,7 +46,9 @@ const ChapterPage = () => {
     const fetchAuthor = async () => {
       // console.log(`${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`)
       try {
-        const authorURL = `${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`
+        const authorURL = `${import.meta.env.VITE_AUTHOR_URL}/${
+          chapter.userId
+        }`;
         const res = await axios.get(authorURL);
         setAuthor(res.data.username || "Unknown");
       } catch (err) {
@@ -73,13 +76,13 @@ const ChapterPage = () => {
 
   // Process text node to make Devanagari words clickable
   const processTextNode = (text) => {
-    if (typeof text !== 'string') return text;
-    
+    if (typeof text !== "string") return text;
+
     const tokens = tokenize(text);
     return tokens.map((token, idx) => {
       const isWord = token.trim() && !/^[।,;!?.\s]+$/.test(token);
       const isDevanagariWord = isWord && isDevanagari(token);
-      
+
       if (isDevanagariWord) {
         return (
           <span
@@ -101,32 +104,34 @@ const ChapterPage = () => {
   // Recursively process parsed HTML nodes
   const processNodes = (nodes) => {
     if (!nodes) return null;
-    
-    if (typeof nodes === 'string') {
+
+    if (typeof nodes === "string") {
       return processTextNode(nodes);
     }
-    
+
     if (Array.isArray(nodes)) {
       return nodes.map((node, idx) => {
-        if (typeof node === 'string') {
-          return <React.Fragment key={idx}>{processTextNode(node)}</React.Fragment>;
+        if (typeof node === "string") {
+          return (
+            <React.Fragment key={idx}>{processTextNode(node)}</React.Fragment>
+          );
         }
         if (React.isValidElement(node)) {
           return React.cloneElement(node, {
             key: idx,
-            children: processNodes(node.props.children)
+            children: processNodes(node.props.children),
           });
         }
         return node;
       });
     }
-    
+
     if (React.isValidElement(nodes)) {
       return React.cloneElement(nodes, {
-        children: processNodes(nodes.props.children)
+        children: processNodes(nodes.props.children),
       });
     }
-    
+
     return nodes;
   };
 
@@ -134,22 +139,22 @@ const ChapterPage = () => {
     const rect = event.target.getBoundingClientRect();
     const scrollY = window.scrollY || window.pageYOffset;
     const viewportHeight = window.innerHeight;
-    
+
     let top = rect.bottom + scrollY + 4;
     let left = rect.left;
-    
+
     const tooltipHeight = 200;
     const spaceBelow = viewportHeight - rect.bottom;
-    
+
     if (spaceBelow < tooltipHeight && rect.top > tooltipHeight) {
       top = rect.top + scrollY - tooltipHeight - 4;
     }
-    
+
     const tooltipWidth = 384;
     if (left + tooltipWidth > window.innerWidth) {
       left = window.innerWidth - tooltipWidth - 16;
     }
-    
+
     setTooltipPos({ x: Math.max(16, left), y: top });
     setHoveredFootnote(footnoteNum);
   };
@@ -180,7 +185,11 @@ const ChapterPage = () => {
       if (beforeText) {
         const parsed = parse(beforeText);
         const processed = processNodes(parsed);
-        elements.push(<React.Fragment key={`before-${match.index}`}>{processed}</React.Fragment>);
+        elements.push(
+          <React.Fragment key={`before-${match.index}`}>
+            {processed}
+          </React.Fragment>
+        );
       }
 
       elements.push(
@@ -206,7 +215,9 @@ const ChapterPage = () => {
     if (remainingText) {
       const parsed = parse(remainingText);
       const processed = processNodes(parsed);
-      elements.push(<React.Fragment key="remaining">{processed}</React.Fragment>);
+      elements.push(
+        <React.Fragment key="remaining">{processed}</React.Fragment>
+      );
     }
 
     return elements;
@@ -251,7 +262,7 @@ const ChapterPage = () => {
           </div>
         </div>
 
- {/* Main Text */}
+        {/* Main Text */}
         <div className="prose prose-lg max-w-none">
           <div className="text-gray-800 leading-relaxed text-lg">
             {parseTextWithFootnotes(chapter.mainText, chapter.footnotes)}
@@ -286,11 +297,10 @@ const ChapterPage = () => {
                   >
                     [{footnote.number}]
                   </span>
-                            <span
-            className="text-gray-700"
-            dangerouslySetInnerHTML={{ __html: footnote.text }}
-          />
-
+                  <span
+                    className="text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: footnote.text }}
+                  />
                 </div>
               ))}
             </div>
@@ -306,20 +316,23 @@ const ChapterPage = () => {
           style={{
             left: `${tooltipPos.x}px`,
             top: `${tooltipPos.y}px`,
-            maxHeight: '200px',
-            overflowY: 'auto'
+            maxHeight: "200px",
+            overflowY: "auto",
           }}
           onMouseLeave={() => setHoveredFootnote(null)}
         >
           <div className="text-xs font-semibold mb-1">
             Footnote {currentFootnote.number}
           </div>
-          <div className="text-sm"  dangerouslySetInnerHTML={{ __html: currentFootnote.text }}/>
+          <div
+            className="text-sm"
+            dangerouslySetInnerHTML={{ __html: currentFootnote.text }}
+          />
         </div>
       )}
 
       {/* Devanagari Word Popup */}
-      <DevanagariWordPopup 
+      <DevanagariWordPopup
         word={selectedDevanagariWord}
         onClose={() => setSelectedDevanagariWord(null)}
       />

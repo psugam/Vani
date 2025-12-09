@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ChapterSchema = new mongoose.Schema(
+const macdonnellChapterSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +45,7 @@ const ChapterSchema = new mongoose.Schema(
   }
 );
 
-const Chapter =
-  mongoose.models.chapter || mongoose.model("chapter", ChapterSchema);
-module.exports = Chapter;
+const MacdonnellChapter =
+  mongoose.models.chapter ||
+  mongoose.model("macdonnellChapter", macdonnellChapterSchema);
+module.exports = MacdonnellChapter;
