@@ -45,7 +45,8 @@ const macdonnellChapterSchema = new mongoose.Schema(
   }
 );
 
-const MacdonnellChapter =
-  mongoose.models.chapter ||
-  mongoose.model("macdonnellChapter", macdonnellChapterSchema);
+const MacdonnellChapter = mongoose.model(
+  "macdonnellChapter",
+  macdonnellChapterSchema
+);
 module.exports = MacdonnellChapter;
