@@ -12,9 +12,7 @@ const About = () => {
           modern tools.
         </p>
 
-        <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-          Features
-        </h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">Features</h2>
         <ul className="list-disc list-inside text-lg text-gray-700 mb-6 space-y-2">
           <li>
             <strong>Sanskrit Readers:</strong> Read classic Sanskrit texts like
@@ -53,17 +51,15 @@ const About = () => {
           </li>
         </ul>
 
-        <h2 className="text-3xl font-semibold text-gray-900 mb-4">
-          Contact
-        </h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">Contact</h2>
         <p className="text-lg text-gray-700">
           Have questions or feedback? We'd love to hear from you. Please reach
           out to us at{" "}
           <a
-            href="mailto:sugam.d.ray@gmail.com"
+            href="mailto:pokharelsugam19@gmail.com"
             className="text-blue-600 hover:underline"
           >
-            sugam.d.ray@gmail.com
+            pokharelsugam19@gmail.com
           </a>
           .
         </p>

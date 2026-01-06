@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import Button from "../components/common/Button";
 
+const API_BASE =
+  import.meta.env.VITE_PARSER_API || "http://localhost:3000/api/parse";
+
 function DictionarySearch() {
   const [inputValue, setInputValue] = useState("");
   const [dictionaryResults, setDictionaryResults] = useState(null);
@@ -21,9 +24,7 @@ function DictionarySearch() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const apiUrl = `https://psugam-sanskrit-parser-api.hf.space/meaning?word=${encodeURIComponent(
-      inputValue
-    )}`;
+    const apiUrl = `${API_BASE}/meaning?word=${encodeURIComponent(inputValue)}`;
 
     try {
       const { data } = await axios.get(apiUrl);
