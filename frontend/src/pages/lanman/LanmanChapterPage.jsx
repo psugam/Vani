@@ -5,7 +5,7 @@ import startCase from "@stdlib/string-startcase";
 import parse from "html-react-parser";
 import DevanagariWordPopup from "../../components/DevanagariWordPopup";
 
-const ChapterPage = () => {
+const LanmanChapterPage = () => {
   const { chapterNo } = useParams();
   const [chapter, setChapter] = useState(null);
   const [author, setAuthor] = useState("-");
@@ -26,11 +26,17 @@ const ChapterPage = () => {
         const res = await axios.get(API_URL);
         if (res.status !== 200) throw new Error("Failed to fetch chapter");
 
-        const data = res.data[0] || res.data;
-        setChapter({
-          ...data,
-          footnotes: Array.isArray(data.footnotes) ? data.footnotes : [],
-        });
+        const data = res.data;
+        if (data.length === 0) {
+          setChapter({});
+        } else {
+          setChapter({
+            ...data[0],
+            footnotes: Array.isArray(data[0].footnotes)
+              ? data[0].footnotes
+              : [],
+          });
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -44,7 +50,6 @@ const ChapterPage = () => {
   useEffect(() => {
     if (!chapter || !chapter.userId) return;
     const fetchAuthor = async () => {
-      // console.log(`${import.meta.env.VITE_AUTHOR_URL}/${chapter.userId}`)
       try {
         const authorURL = `${import.meta.env.VITE_AUTHOR_URL}/${
           chapter.userId
@@ -63,18 +68,15 @@ const ChapterPage = () => {
     hoveredFootnote &&
     chapter?.footnotes?.find((f) => f.number === hoveredFootnote);
 
-  // Check if a word contains Devanagari characters
   const isDevanagari = (str) => {
     const devanagariRegex = /[\u0900-\u097F]/;
     return devanagariRegex.test(str);
   };
 
-  // Tokenize text into words and separators
   const tokenize = (str) => {
     return str.split(/(\s+|[।,;!?.])/);
   };
 
-  // Process text node to make Devanagari words clickable
   const processTextNode = (text) => {
     if (typeof text !== "string") return text;
 
@@ -101,7 +103,6 @@ const ChapterPage = () => {
     });
   };
 
-  // Recursively process parsed HTML nodes
   const processNodes = (nodes) => {
     if (!nodes) return null;
 
@@ -136,26 +137,35 @@ const ChapterPage = () => {
   };
 
   const handleFootnoteHover = (footnoteNum, event) => {
-    const rect = event.target.getBoundingClientRect();
+    const target = event.target;
+    const rect = target.getBoundingClientRect();
     const scrollY = window.scrollY || window.pageYOffset;
     const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
 
+    const tooltipHeight = tooltipRef.current?.offsetHeight || 200;
+    const tooltipWidth = tooltipRef.current?.offsetWidth || 384; // max-w-sm is 384px
+
+    // Vertical position
     let top = rect.bottom + scrollY + 4;
-    let left = rect.left;
-
-    const tooltipHeight = 200;
     const spaceBelow = viewportHeight - rect.bottom;
 
     if (spaceBelow < tooltipHeight && rect.top > tooltipHeight) {
       top = rect.top + scrollY - tooltipHeight - 4;
     }
 
-    const tooltipWidth = 384;
-    if (left + tooltipWidth > window.innerWidth) {
-      left = window.innerWidth - tooltipWidth - 16;
+    // Horizontal position
+    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+
+    // Boundary checks
+    if (left < 16) {
+      left = 16;
+    }
+    if (left + tooltipWidth > viewportWidth - 16) {
+      left = viewportWidth - tooltipWidth - 16;
     }
 
-    setTooltipPos({ x: Math.max(16, left), y: top });
+    setTooltipPos({ x: left, y: top });
     setHoveredFootnote(footnoteNum);
   };
 
@@ -237,7 +247,7 @@ const ChapterPage = () => {
       </div>
     );
 
-  if (!chapter)
+  if (!chapter || Object.keys(chapter).length === 0)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
         <div className="text-xl text-gray-600">Chapter not found</div>
@@ -245,14 +255,13 @@ const ChapterPage = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 relative">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        {/* Chapter Header */}
+    <div className="min-h-screen bg-gray-50 py-8 px-2 md:py-12 md:px-4 relative">
+      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-4 md:p-8">
         <div className="mb-8">
           <div className="text-gray-500 text-sm mb-2">
             Chapter {chapter.serialNumber}
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             {chapter.title}
           </h1>
           <div className="text-sm text-gray-500">
@@ -262,14 +271,12 @@ const ChapterPage = () => {
           </div>
         </div>
 
-        {/* Main Text */}
         <div className="prose prose-lg max-w-none">
           <div className="text-gray-800 leading-relaxed text-lg">
             {parseTextWithFootnotes(chapter.mainText, chapter.footnotes)}
           </div>
         </div>
 
-        {/* Footnotes */}
         {chapter.footnotes.length > 0 && (
           <div className="mt-12 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -308,7 +315,6 @@ const ChapterPage = () => {
         )}
       </div>
 
-      {/* Footnote Hover Tooltip */}
       {hoveredFootnote && currentFootnote && (
         <div
           ref={tooltipRef}
@@ -331,7 +337,6 @@ const ChapterPage = () => {
         </div>
       )}
 
-      {/* Devanagari Word Popup */}
       <DevanagariWordPopup
         word={selectedDevanagariWord}
         onClose={() => setSelectedDevanagariWord(null)}
@@ -340,4 +345,5 @@ const ChapterPage = () => {
   );
 };
 
-export default ChapterPage;
+export default LanmanChapterPage;
+

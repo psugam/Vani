@@ -9,16 +9,14 @@ const DevanagariWordPopup = ({ word, onClose }) => {
   const [meanings, setMeanings] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch dictionary meaning
   useEffect(() => {
     const fetchMeaning = async () => {
-      const fetch_url=`${import.meta.env.VITE_MW_DICT_URL}/${iastWord}`
-      // console.log(fetch_url)
       try {
-        const res = await axios.get(
-          fetch_url
-        );
-        setMeanings(res.data); // Only the data array
+        const dictionaryUrl = `${
+          import.meta.env.VITE_MW_DICT_URL
+        }/${iastWord}`;
+        const { data } = await axios.get(dictionaryUrl);
+        setMeanings(data);
       } catch (err) {
         console.log("Error fetching meaning:", err);
         setMeanings([]); // Fallback to empty array
@@ -29,9 +27,6 @@ const DevanagariWordPopup = ({ word, onClose }) => {
 
     fetchMeaning();
   }, [iastWord]);
-  // useEffect(()=>{
-  //   console.log(meanings)
-  // }, [meanings])
 
   return (
     <div

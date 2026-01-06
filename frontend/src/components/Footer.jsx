@@ -1,15 +1,13 @@
-import React from 'react'
+import React from "react";
 
 const Footer = () => {
-  return (
-    <>
-    <div>
-      <div className='min-h-[10vh] bg-gray-100 text-center text-xl p-4 border-t border-black'>
-        <p>© 2024 Vāṇī. All rights reserved.</p>
-      </div>
-    </div>
-    </>
-  )
-}
+  const currentYear = new Date().getFullYear();
 
-export default Footer
+  return (
+    <div className="min-h-[10vh] bg-gray-100 text-center text-xl p-4 border-t border-black">
+      <p>© {currentYear} Vāṇī. All rights reserved.</p>
+    </div>
+  );
+};
+
+export default Footer;

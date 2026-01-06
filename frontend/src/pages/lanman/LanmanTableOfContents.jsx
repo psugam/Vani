@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const TableOfContents = () => {
+const LanmanTableOfContents = () => {
   const [tocData, setTocData] = useState(null);
 
   const API_URL = import.meta.env.VITE_ALL_CHAPTERS_URL_LANMAN;
@@ -14,7 +14,6 @@ const TableOfContents = () => {
         if (res.status !== 200) throw new Error("Failed to fetch data");
         const data = res.data;
         setTocData(data);
-        // console.log(data);
       } catch (err) {
         console.log(err.message);
       }
@@ -23,32 +22,47 @@ const TableOfContents = () => {
   }, [API_URL]);
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md min-w-[50%] min-h-[50%]">
-          <h2 className="text-4xl font-semibold text-gray-800 mb-6 text-center">
-            Table of Contents
-          </h2>
-          <div className="text-gray-600 text-center text-xl">
-            {tocData ? (
-              tocData.map((chapter) => (
-                <div key={chapter._id} className="mb-2">
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Lanman's Sanskrit Reader
+        </h1>
+        <p className="text-lg text-gray-700 mb-6">
+          A classic introduction to Sanskrit literature, with selections from
+          the Vedas, Brahmanas, and Sutras.
+        </p>
+
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+          Table of Contents
+        </h2>
+        <div className="text-gray-600 text-lg">
+          {tocData ? (
+            <ul className="space-y-4">
+              {tocData.map((chapter) => (
+                <li key={chapter._id} className="border-b pb-2">
                   <Link
                     to={`/lanman/chapter/${chapter.serialNumber}`}
                     className="text-blue-600 hover:underline"
                   >
-                    Chapter {chapter.serialNumber}: {chapter.title}
+                    <span className="font-semibold">
+                      Chapter {chapter.serialNumber}:
+                    </span>{" "}
+                    {chapter.title}
                   </Link>
-                </div>
-              ))
-            ) : (
-              <p>Loading...</p>
-            )}
-          </div>
+                  <p className="text-base text-gray-600 ml-4">
+                    {chapter.description}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default TableOfContents;
+export default LanmanTableOfContents;
+
