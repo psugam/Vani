@@ -7,7 +7,6 @@ function DictionarySearch() {
   const [dictionaryResults, setDictionaryResults] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Helper to map backend shortcodes to readable names
   const sourceMap = {
     mw: "Monier-Williams",
     ap90: "Apte",
@@ -22,14 +21,13 @@ function DictionarySearch() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // API endpoint provided: http://psugam-sanskrit-parser-api.hf.space/meaning
-    const apiUrl = `http://psugam-sanskrit-parser-api.hf.space/meaning?word=${encodeURIComponent(
+    const apiUrl = `https://psugam-sanskrit-parser-api.hf.space/meaning?word=${encodeURIComponent(
       inputValue
     )}`;
 
     try {
       const { data } = await axios.get(apiUrl);
-      setDictionaryResults(data); // This is now an array of grouped objects
+      setDictionaryResults(data);
     } catch (error) {
       console.error("Error fetching meaning:", error);
       setDictionaryResults([]);
@@ -39,13 +37,68 @@ function DictionarySearch() {
     }
   };
 
-  // Helper to safely render text containing HTML tags from the dictionary
+  /**
+   * Cleans and formats the special dictionary tags.
+   * <s> is used for Sanskrit text (NOT strikethrough).
+   * <ab> is for abbreviations.
+   * <ls> is for literary sources/references.
+   */
+  const formatDictionaryText = (html) => {
+    if (!html) return "";
+    return (
+      html
+        .replace(/<s>/g, '<span class="skt-text">')
+        .replace(/<\/s>/g, "</span>")
+        .replace(/<ab>/g, '<span class="dict-abbrev">')
+        .replace(/<\/ab>/g, "</span>")
+        .replace(/<ls>/g, '<span class="dict-source">')
+        .replace(/<\/ls>/g, "</span>")
+        .replace(/<lex>/g, '<span class="dict-lex">')
+        .replace(/<\/lex>/g, "</span>")
+        // Remove or style empty structural divs/labels
+        .replace(/<div n="1"\/>/g, "")
+        .replace(/<lbinfo[^>]*\/>/g, " ")
+    );
+  };
+
   const renderDefinition = (htmlContent) => {
-    return { __html: htmlContent };
+    return { __html: formatDictionaryText(htmlContent) };
   };
 
   return (
     <div className="flex flex-col py-8 md:py-12 max-w-4xl mx-auto">
+      {/* Custom Styles for Dictionary Tags */}
+      <style>{`
+        .skt-text { 
+            color: #1e4d6b; 
+            font-style: italic; 
+            font-family: serif;
+            font-weight: 500;
+        }
+        .dict-abbrev { 
+            color: #6b7280; 
+            font-variant: small-caps; 
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        .dict-source { 
+            color: #059669; 
+            font-size: 0.9em; 
+            background-color: #f0fdf4;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .dict-lex {
+            color: #7c3aed;
+            font-weight: bold;
+            font-style: normal;
+        }
+        .meaning-item b {
+            color: #111827;
+            margin-right: 4px;
+        }
+      `}</style>
+
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-center p-4 space-y-4"
@@ -60,9 +113,6 @@ function DictionarySearch() {
         <Button type="submit" disabled={!inputValue || loading}>
           {loading ? "Searching..." : "Search Meaning"}
         </Button>
-        <div className="text-gray-500 text-sm text-center">
-          Note: This search uses the integrated Sanskrit Parser API.
-        </div>
       </form>
 
       <div className="mt-8 px-4 space-y-6">
@@ -72,7 +122,6 @@ function DictionarySearch() {
               key={idx}
               className="bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden"
             >
-              {/* Header: Stem and Type */}
               <div className="bg-gray-50 p-4 border-b border-gray-200">
                 <div className="flex flex-wrap justify-between items-center gap-2">
                   <h3 className="text-xl font-bold text-blue-900">
@@ -83,7 +132,6 @@ function DictionarySearch() {
                   </span>
                 </div>
 
-                {/* Grammar Tags (Cases/Numbers/Tense) */}
                 <div className="mt-2 flex flex-wrap gap-2">
                   {entry.detected_tags.map((tagSet, tIdx) => (
                     <span
@@ -96,19 +144,18 @@ function DictionarySearch() {
                 </div>
               </div>
 
-              {/* Definitions grouped by Dictionary Source */}
               <div className="p-5 space-y-6">
                 {Object.entries(entry.definitions).map(
                   ([source, sentences]) => (
                     <div key={source} className="space-y-2">
-                      <h4 className="text-sm font-bold text-orange-800 border-b border-orange-100 pb-1">
+                      <h4 className="text-sm font-bold text-orange-800 border-b border-orange-100 pb-1 uppercase tracking-wider">
                         {sourceMap[source] || source.toUpperCase()}
                       </h4>
-                      <ul className="list-disc ml-5 space-y-2">
+                      <ul className="list-none space-y-3">
                         {sentences.map((sentence, sIdx) => (
                           <li
                             key={sIdx}
-                            className="text-gray-700 leading-relaxed"
+                            className="meaning-item text-gray-700 leading-relaxed text-md"
                             dangerouslySetInnerHTML={renderDefinition(sentence)}
                           />
                         ))}
