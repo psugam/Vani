@@ -27,15 +27,15 @@ const MacdonnellChapterPage = () => {
         if (res.status !== 200) throw new Error("Failed to fetch chapter");
 
         const data = res.data;
-        if (data.length === 0) {
-          setChapter({});
-        } else {
+        if (Array.isArray(data) && data.length > 0) {
           setChapter({
             ...data[0],
             footnotes: Array.isArray(data[0].footnotes)
               ? data[0].footnotes
               : [],
           });
+        } else {
+          setChapter({});
         }
       } catch (err) {
         setError(err.message);
