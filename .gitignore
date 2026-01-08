@@ -25,6 +25,8 @@ pids
 .env.test.local
 .env.production.local
 
+.ev.example
+
 # Editor / OS files
 .DS_Store
 Thumbs.db
@@ -43,11 +45,13 @@ coverage/
 # Backend specific
 /backend/node_modules/
 /backend/package-lock.json
+/backend/.env.example
 
 # Frontend specific
 /frontend/node_modules/
 /frontend/dist/
 /frontend/package-lock.json
+/frontend/.env.example
 
 # Misc
 *.tgz
