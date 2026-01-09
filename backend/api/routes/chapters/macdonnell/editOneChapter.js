@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 router.put(
-  "/chapters/macdonnell/editonechapter/:chapterId",
+  "/chapters/macdonnell/editonechapter/:macdonnellChapterId",
   async (req, res) => {
     try {
       const { macdonnellChapterId } = req.params;
