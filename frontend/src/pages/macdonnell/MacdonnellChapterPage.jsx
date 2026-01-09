@@ -4,6 +4,7 @@ import axios from "axios";
 import startCase from "@stdlib/string-startcase";
 import parse from "html-react-parser";
 import DevanagariWordPopup from "../../components/DevanagariWordPopup";
+import { removeVedicAccents } from "../../components/VedicCleaner";
 
 const MacdonnellChapterPage = () => {
   const { chapterNo } = useParams();
@@ -91,7 +92,9 @@ const MacdonnellChapterPage = () => {
             key={`deva-${idx}`}
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedDevanagariWord(token);
+              // Apply Vedic Cleaner here so the popup receives a searchable word
+              const cleanedWord = removeVedicAccents(token);
+              setSelectedDevanagariWord(cleanedWord);
             }}
             className="cursor-pointer hover:bg-blue-100 transition-colors rounded px-0.5"
           >
@@ -227,7 +230,9 @@ const MacdonnellChapterPage = () => {
   if (loading)
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-xl text-gray-600">Loading chapter...</div>
+        <div className="animate-pulse text-xl text-gray-600">
+          Loading chapter...
+        </div>
       </div>
     );
 
@@ -252,18 +257,17 @@ const MacdonnellChapterPage = () => {
           <div className="text-gray-500 text-sm mb-2">
             Chapter {chapter.serialNumber}
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 font-serif">
             {chapter.title}
           </h1>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 border-b pb-4">
             Author: {startCase(author)} | Posted:{" "}
-            {new Date(chapter.postedDate).toLocaleDateString()} | Last Edited:{" "}
-            {new Date(chapter.lastEditedDate).toLocaleDateString()}
+            {new Date(chapter.postedDate).toLocaleDateString()}
           </div>
         </div>
 
         <div className="prose prose-lg max-w-none">
-          <div className="text-gray-800 leading-relaxed text-lg">
+          <div className="text-gray-800 leading-relaxed text-lg font-serif">
             {parseTextWithFootnotes(chapter.mainText, chapter.footnotes)}
           </div>
         </div>
@@ -278,10 +282,10 @@ const MacdonnellChapterPage = () => {
                 <div
                   key={footnote._id}
                   id={`footnote-${footnote.number}`}
-                  className="flex gap-3"
+                  className="flex gap-3 text-sm"
                 >
                   <span
-                    className="text-blue-600 font-medium cursor-pointer hover:text-blue-800"
+                    className="text-blue-600 font-medium cursor-pointer hover:underline"
                     onClick={() => {
                       const el = document.querySelector(
                         `sup[data-footnote='${footnote.number}']`
@@ -296,7 +300,7 @@ const MacdonnellChapterPage = () => {
                     [{footnote.number}]
                   </span>
                   <span
-                    className="text-gray-700"
+                    className="text-gray-600"
                     dangerouslySetInnerHTML={{ __html: footnote.text }}
                   />
                 </div>
@@ -318,11 +322,11 @@ const MacdonnellChapterPage = () => {
           }}
           onMouseLeave={() => setHoveredFootnote(null)}
         >
-          <div className="text-xs font-semibold mb-1">
+          <div className="text-xs font-bold border-b border-gray-700 pb-1 mb-2">
             Footnote {currentFootnote.number}
           </div>
           <div
-            className="text-sm"
+            className="text-sm leading-snug"
             dangerouslySetInnerHTML={{ __html: currentFootnote.text }}
           />
         </div>
@@ -337,4 +341,3 @@ const MacdonnellChapterPage = () => {
 };
 
 export default MacdonnellChapterPage;
-
