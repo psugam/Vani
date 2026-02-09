@@ -41,6 +41,13 @@ const searchInVei = require("./routes/dictionary/vei/searchInVei");
 const searchInBhs = require("./routes/dictionary/bhs/searchInBhs");
 const searchAllDictionaries = require("./routes/dictionary/all/searchAllDictionaries");
 
+// text routes
+const addOneText = require("./routes/texts/addOneText");
+const getAllTexts = require("./routes/texts/getAllTexts");
+const getOneText = require("./routes/texts/getOneText");
+const editOneText = require("./routes/texts/editOneText");
+const deleteOneText = require("./routes/texts/deleteOneText");
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -68,6 +75,14 @@ app.use("/api", getOneChapterMacdonnell);
 app.use("/api", deleteOneChapterMacdonnell);
 app.use("/api", editOneChapterMacdonnell);
 
+// text routes
+app.use("/api", addOneText);
+app.use("/api", getAllTexts);
+app.use("/api", getOneText);
+app.use("/api", getAllTexts);
+app.use("/api", editOneText);
+app.use("/api", deleteOneText);
+
 // dictionary routes
 app.use("/api/mw", searchInMw);
 app.use("/api/ap", searchInApte);
@@ -80,4 +95,3 @@ connectDB().catch((err) => console.error("Database connection error:", err));
 
 // Export for Vercel
 module.exports = app;
-
