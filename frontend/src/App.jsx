@@ -19,6 +19,8 @@ import Transliterate from "./pages/Transliterate";
 import DictionarySearch from "./pages/DictionarySearch";
 import AdminChapterManager from "./pages/admin/AdminChapterManager";
 
+import AllTextsListPage from "./pages/texts/AllTextsListPage";
+
 function App() {
   const [count, setCount] = useState(0);
 
@@ -51,6 +53,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/transliterate" element={<Transliterate />} />
           <Route path="/dictionary" element={<DictionarySearch />} />
+          <Route path="/texts" element={<AllTextsListPage />} />
           <Route path="/admin/chapters" element={<AdminChapterManager />} />
 
           {/* not found route */}

@@ -2,11 +2,16 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+ 
 const username = encodeURIComponent(process.env.USER_NAME);
 const password = encodeURIComponent(process.env.PASS_WORD);
 const dbName = process.env.DB_NAME || "test";
 
-const dbURI = `mongodb+srv://${username}:${password}@cluster0.w5q0xla.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`;
+// const dbURI = `mongodb+srv://${username}:${password}@cluster0.w5q0xla.mongodb.net/${dbName}?retryWrites=true&w=majority&appName=Cluster0`;
+// console.log(dbURI)
+const dbURI =`mongodb://${username}:${password}@ac-wblryu4-shard-00-00.w5q0xla.mongodb.net:27017,ac-wblryu4-shard-00-01.w5q0xla.mongodb.net:27017,ac-wblryu4-shard-00-02.w5q0xla.mongodb.net:27017/?ssl=true&replicaSet=atlas-14mm0q-shard-0&authSource=admin&appName=Cluster0`
+
+
 
 // Cached connection
 let cached = global.mongoose;
@@ -36,3 +41,4 @@ async function connectDB() {
 }
 
 module.exports = connectDB;
+
