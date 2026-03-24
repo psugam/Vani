@@ -68,7 +68,17 @@ export default function Transliterate() {
       return;
     }
 
-    const result = Sanscript.t(inputText, fromScheme, toScheme);
+    let result = Sanscript.t(inputText, fromScheme, toScheme);
+
+    // Post-processing to preserve । and ॥
+    // We target the common ways Sanscript converts them (pipes, periods, or "ka ka")
+    if (isRomanScheme(toScheme)) {
+      result = result
+        .replace(/ka\s+ka/g, "॥") // Fix for the "ka ka" issue
+        .replace(/\|\|/g, "॥")     // Fix for double pipe
+        .replace(/\|/g, "।");      // Fix for single pipe
+    }
+
     setOutputText(result);
   };
 
