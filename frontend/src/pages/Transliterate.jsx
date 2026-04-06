@@ -70,13 +70,11 @@ export default function Transliterate() {
 
     let result = Sanscript.t(inputText, fromScheme, toScheme);
 
-    // Post-processing to preserve । and ॥
-    // We target the common ways Sanscript converts them (pipes, periods, or "ka ka")
+
     if (isRomanScheme(toScheme)) {
       result = result
-        .replace(/ka\s+ka/g, "॥") // Fix for the "ka ka" issue
-        .replace(/\|\|/g, "॥")     // Fix for double pipe
-        .replace(/\|/g, "।");      // Fix for single pipe
+        .replace(/\|\|/g, "॥")    
+        .replace(/\|/g, "।");      
     }
 
     setOutputText(result);
